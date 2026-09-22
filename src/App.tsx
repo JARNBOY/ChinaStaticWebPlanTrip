@@ -3,6 +3,7 @@ import { Header } from "./components/Header";
 import { DayNavigation } from "./components/DayNavigation";
 import { DayHeader } from "./components/DayHeader";
 import { RouteSummary } from "./components/RouteSummary";
+import { LocationCarousel } from "./components/LocationCarousel";
 import { HotelCard } from "./components/HotelCard";
 import { ProgressBar } from "./components/ProgressBar";
 import { Timeline } from "./components/Timeline";
@@ -62,6 +63,17 @@ export function App() {
     window.print();
   };
 
+  const handleSelectStop = (stopId: string) => {
+    const el = document.getElementById(`entry-${stopId}`);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+      el.classList.add("stop-target-pulse");
+      setTimeout(() => {
+        el.classList.remove("stop-target-pulse");
+      }, 1800);
+    }
+  };
+
   return (
     <div className="travel-app-root">
       <div className="journal-page-container">
@@ -94,6 +106,12 @@ export function App() {
 
           {/* Top Compact Route Summary */}
           <RouteSummary summary={activeDayPlan.summary} />
+
+          {/* Visual Location Preview Reel with 2s Auto-Scroll & Click-to-Scroll */}
+          <LocationCarousel
+            entries={entries}
+            onSelectStop={handleSelectStop}
+          />
 
           {/* Hotel Information & Amap Route */}
           {activeDayPlan.hotel && (

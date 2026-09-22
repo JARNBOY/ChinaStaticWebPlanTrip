@@ -1,0 +1,3 @@
+# Native CSS Scroll-Snap Carousel with Controlled Auto-Scroll Engine
+
+We decided to implement the Location Carousel using native CSS Scroll-Snap (`scroll-snap-type: x mandatory`) and a custom lightweight React timer hook rather than adding third-party slider libraries (such as Swiper, Slick, or Embla). Because the app is designed for low-latency mobile exploration across China with full PWA offline caching, relying on the browser's hardware-accelerated scroll compositor achieves 120Hz smooth touch dragging and zero additional bundle overhead while remaining completely resilient to network latency and framework churn.

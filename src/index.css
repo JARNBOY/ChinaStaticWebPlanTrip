@@ -408,6 +408,303 @@ input {
   line-height: 1.4;
 }
 
+/* ==========================================================================
+   Location Preview Carousel (2s Auto-Scroll & Click-to-Scroll Reel)
+   ========================================================================== */
+.location-carousel-section {
+  margin-bottom: 22px;
+  position: relative;
+}
+
+.carousel-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 9px;
+  padding: 0 2px;
+}
+
+.carousel-title-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.carousel-icon {
+  color: var(--accent);
+}
+
+.carousel-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
+.carousel-counter-badge {
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 1px 7px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-subtle);
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
+  font-variant-numeric: tabular-nums;
+  margin-left: 2px;
+}
+
+.carousel-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.carousel-control-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  transition: all 160ms ease;
+  box-shadow: var(--shadow-subtle);
+  cursor: pointer;
+}
+
+.carousel-control-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-main);
+  border-color: var(--border-light);
+  transform: translateY(-1px);
+}
+
+.carousel-control-btn:active {
+  transform: scale(0.92);
+}
+
+.carousel-viewport {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  margin: 0 -4px;
+  padding: 4px 4px 10px 4px;
+}
+
+.carousel-viewport::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel-track {
+  display: flex;
+  gap: 12px;
+  width: max-content;
+}
+
+.carousel-card {
+  position: relative;
+  flex: 0 0 200px;
+  height: 130px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  cursor: pointer;
+  scroll-snap-align: start;
+  scroll-snap-stop: normal;
+  border: 1px solid rgba(31, 31, 30, 0.12);
+  box-shadow: 0 2px 8px rgba(31, 31, 30, 0.08);
+  user-select: none;
+  background: #1A1A1A;
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 220ms ease, border-color 220ms ease;
+}
+
+.carousel-card:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(31, 31, 30, 0.18);
+  border-color: var(--accent);
+}
+
+.carousel-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.carousel-card.active-slide {
+  border-color: var(--accent);
+}
+
+.carousel-card-img-wrapper {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.carousel-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 450ms ease;
+}
+
+.carousel-card:hover .carousel-card-img {
+  transform: scale(1.08);
+}
+
+.carousel-card-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.38) 0%,
+    rgba(0, 0, 0, 0.08) 35%,
+    rgba(0, 0, 0, 0.72) 75%,
+    rgba(0, 0, 0, 0.92) 100%
+  );
+}
+
+.carousel-card-top-badges {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 2;
+}
+
+.carousel-stop-badge {
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  color: #FFFFFF;
+  padding: 2px 7px;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  letter-spacing: 0.02em;
+}
+
+.carousel-time-badge {
+  font-size: 10.5px;
+  font-weight: 600;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  color: rgba(255, 255, 255, 0.95);
+  padding: 2px 6px;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.carousel-card-bottom-info {
+  position: absolute;
+  bottom: 8px;
+  left: 9px;
+  right: 9px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.carousel-place-title {
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #FFFFFF;
+  line-height: 1.25;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.carousel-place-chinese {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #F6E6C9;
+  line-height: 1.2;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.carousel-duration-pill {
+  align-self: flex-start;
+  margin-top: 3px;
+  font-size: 9.5px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  color: #FFFFFF;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+/* Checkpoint Target Pulse Animation when clicked from Carousel */
+@keyframes stopTargetPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(85, 107, 111, 0.7);
+    background-color: rgba(85, 107, 111, 0.14);
+    transform: scale(1);
+  }
+  30% {
+    box-shadow: 0 0 0 8px rgba(85, 107, 111, 0.22);
+    background-color: rgba(85, 107, 111, 0.2);
+    transform: scale(1.012);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(85, 107, 111, 0);
+    background-color: transparent;
+    transform: scale(1);
+  }
+}
+
+.timeline-item.stop-target-pulse .stop-card {
+  animation: stopTargetPulse 1.8s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: var(--radius-sm);
+  padding: 6px;
+  margin: -6px;
+}
+
+/* Responsive Scaling for Carousel */
+@media (max-width: 480px) {
+  .carousel-card {
+    flex: 0 0 190px;
+    height: 125px;
+  }
+  .carousel-place-title {
+    font-size: 13px;
+  }
+  .carousel-place-chinese {
+    font-size: 11px;
+  }
+}
+
+@media (min-width: 768px) {
+  .carousel-card {
+    flex: 0 0 240px;
+    height: 148px;
+  }
+  .carousel-place-title {
+    font-size: 14.5px;
+  }
+  .carousel-place-chinese {
+    font-size: 12px;
+  }
+}
+
 /* Hotel Info Card */
 .hotel-card {
   background: var(--bg-subtle);
@@ -1453,6 +1750,7 @@ input {
   }
 
   .no-print,
+  .location-carousel-section,
   .day-navigation,
   .next-stop-bar,
   .modal-backdrop,

@@ -19,3 +19,7 @@ _Avoid_: Pin, place, waypoint
 **Offline Cache**:
 Client-side caching provided by a Service Worker (PWA) enabling full app usability without active internet connectivity.
 _Avoid_: Local save, browser cache
+
+**Location Carousel**:
+A horizontal visual reel displaying photo cards and bilingual titles for all day stops with auto-scrolling and direct click-to-checkpoint navigation.
+_Avoid_: Image slider, hero banner, photo gallery
