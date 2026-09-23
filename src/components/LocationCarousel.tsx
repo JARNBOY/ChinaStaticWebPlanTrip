@@ -4,28 +4,48 @@ import type { TimelineEntry, StopTimelineEntry } from "../types/itinerary";
 
 interface LocationCarouselProps {
   entries: TimelineEntry[];
+  dayNumber?: number;
   onSelectStop?: (stopId: string) => void;
   autoScrollInterval?: number; // default: 2000ms
 }
 
 export const LocationCarousel: React.FC<LocationCarouselProps> = ({
   entries,
+  dayNumber,
   onSelectStop,
   autoScrollInterval = 2000,
 }) => {
+  const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const [isPaused, setIsPaused] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isTouched, setIsTouched] = useState(false);
+  const [isInView, setIsInView] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   const touchTimerRef = useRef<number | null>(null);
 
-  // Extract all checklist stops (Checkpoint 1 to 17)
+  // Extract all checklist stops
   const stops = entries.filter(
     (e): e is StopTimelineEntry => e.kind === "stop"
   );
 
-  // Smooth scroll carousel track to specific card index
+  // Observe visibility so auto-scroll pauses when scrolled down into timeline
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsInView(entry.isIntersecting);
+      },
+      { threshold: 0.05 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  // Smooth scroll carousel track horizontally to specific card index WITHOUT scrolling the page
   const scrollToIndex = useCallback((index: number) => {
     const track = trackRef.current;
     if (!track) return;
@@ -36,10 +56,9 @@ export const LocationCarousel: React.FC<LocationCarouselProps> = ({
     const targetIndex = (index + cards.length) % cards.length;
     const targetCard = cards[targetIndex];
     if (targetCard) {
-      targetCard.scrollIntoView({
+      track.scrollTo({
+        left: targetCard.offsetLeft - track.offsetLeft,
         behavior: "smooth",
-        inline: "start",
-        block: "nearest",
       });
       setCurrentIndex(targetIndex);
     }
@@ -60,14 +79,23 @@ export const LocationCarousel: React.FC<LocationCarouselProps> = ({
     setIsPaused((prev) => !prev);
   };
 
-  // Auto-scroll loop every 2 seconds (with hover/touch/pause guards and reduced-motion check)
+  // Reset carousel index and scroll position when day entries change
+  useEffect(() => {
+    setCurrentIndex(0);
+    if (trackRef.current) {
+      trackRef.current.scrollTo({ left: 0, behavior: "smooth" });
+    }
+  }, [entries]);
+
+  // Auto-scroll loop every 2 seconds (with hover/touch/pause/viewport guards and reduced-motion check)
   useEffect(() => {
     // Respect user's accessibility reduced-motion preference
     const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
 
-    if (isPaused || isHovered || isTouched || prefersReducedMotion || stops.length <= 1) {
+    // Pause when off-screen, hovered, touched, paused or reduced motion requested
+    if (isPaused || isHovered || isTouched || !isInView || prefersReducedMotion || stops.length <= 1) {
       return;
     }
 
@@ -78,10 +106,10 @@ export const LocationCarousel: React.FC<LocationCarouselProps> = ({
         if (track) {
           const cards = track.querySelectorAll<HTMLElement>(".carousel-card");
           if (cards[nextIndex]) {
-            cards[nextIndex].scrollIntoView({
+            // ONLY scroll the horizontal track container, NEVER window scroll
+            track.scrollTo({
+              left: cards[nextIndex].offsetLeft - track.offsetLeft,
               behavior: "smooth",
-              inline: "start",
-              block: "nearest",
             });
           }
         }
@@ -90,7 +118,7 @@ export const LocationCarousel: React.FC<LocationCarouselProps> = ({
     }, autoScrollInterval);
 
     return () => clearInterval(timer);
-  }, [isPaused, isHovered, isTouched, stops.length, autoScrollInterval]);
+  }, [isPaused, isHovered, isTouched, isInView, stops.length, autoScrollInterval]);
 
   // Touch and drag detection with 4s idle resume
   const handleTouchStart = () => {
@@ -131,6 +159,7 @@ export const LocationCarousel: React.FC<LocationCarouselProps> = ({
 
   return (
     <section
+      ref={sectionRef}
       className="location-carousel-section no-print"
       aria-label="Day Checkpoints Visual Reel"
       onMouseEnter={() => setIsHovered(true)}
@@ -142,7 +171,7 @@ export const LocationCarousel: React.FC<LocationCarouselProps> = ({
       <div className="carousel-header-row">
         <div className="carousel-title-group">
           <Compass size={14} className="carousel-icon" />
-          <span className="carousel-title">DAY 1 CHECKPOINTS · {stops.length} LOCATIONS</span>
+          <span className="carousel-title">DAY {dayNumber || 1} CHECKPOINTS · {stops.length} LOCATIONS</span>
           <span className="carousel-counter-badge">
             {String(currentIndex + 1).padStart(2, "0")} / {String(stops.length).padStart(2, "0")}
           </span>

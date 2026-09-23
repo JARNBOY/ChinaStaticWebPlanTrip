@@ -11,11 +11,11 @@ export const DAYS_CATALOG: DayMeta[] = [
   },
   {
     dayNumber: 2,
-    date: "2026-12-26",
+    date: "2026-12-27",
     city: "Shanghai",
-    routeTitle: "The Bund & Modern Skylines",
-    routeSubtitle: "Lujiazui, Huangpu River Cruise & Rockbund",
-    status: "draft",
+    routeTitle: "Hongkou Morning → The Bund & Lujiazui",
+    routeSubtitle: "Zhapu Rd, Gangbengzha, Rockbund, People's Sq & Food Crawl",
+    status: "ready",
   },
   {
     dayNumber: 3,

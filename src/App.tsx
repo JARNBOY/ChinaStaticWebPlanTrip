@@ -12,17 +12,23 @@ import { PlanEditorModal } from "./components/PlanEditorModal";
 import { Toast } from "./components/Toast";
 import { DAYS_CATALOG } from "./data/daysCatalog";
 import { SHANGHAI_DAY_01 } from "./data/shanghai/day01";
+import { SHANGHAI_DAY_02 } from "./data/shanghai/day02";
+import type { DayPlan } from "./types/itinerary";
 import { useItineraryStorage } from "./hooks/useItineraryStorage";
 import { useDayProgress } from "./hooks/useDayProgress";
 import { getActiveDay, setActiveDay } from "./utils/storage";
+
+const DAY_PLANS: Record<number, DayPlan> = {
+  1: SHANGHAI_DAY_01,
+  2: SHANGHAI_DAY_02,
+};
 
 export function App() {
   const [activeDayNumber, setActiveDayNumber] = useState<number>(() => getActiveDay());
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // For V1, day 1 is fully active; days 2-10 catalogued
-  const activeDayPlan = SHANGHAI_DAY_01;
+  const activeDayPlan = DAY_PLANS[activeDayNumber] || SHANGHAI_DAY_01;
 
   const {
     entries,
@@ -110,6 +116,7 @@ export function App() {
           {/* Visual Location Preview Reel with 2s Auto-Scroll & Click-to-Scroll */}
           <LocationCarousel
             entries={entries}
+            dayNumber={activeDayPlan.dayNumber}
             onSelectStop={handleSelectStop}
           />
 
