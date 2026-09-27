@@ -13,6 +13,8 @@ import { Toast } from "./components/Toast";
 import { DAYS_CATALOG } from "./data/daysCatalog";
 import { SHANGHAI_DAY_01 } from "./data/shanghai/day01";
 import { SHANGHAI_DAY_02 } from "./data/shanghai/day02";
+import { SHANGHAI_DAY_03 } from "./data/shanghai/day03";
+import { SHANGHAI_DAY_04 } from "./data/shanghai/day04";
 import type { DayPlan } from "./types/itinerary";
 import { useItineraryStorage } from "./hooks/useItineraryStorage";
 import { useDayProgress } from "./hooks/useDayProgress";
@@ -21,6 +23,8 @@ import { getActiveDay, setActiveDay } from "./utils/storage";
 const DAY_PLANS: Record<number, DayPlan> = {
   1: SHANGHAI_DAY_01,
   2: SHANGHAI_DAY_02,
+  3: SHANGHAI_DAY_03,
+  4: SHANGHAI_DAY_04,
 };
 
 export function App() {
