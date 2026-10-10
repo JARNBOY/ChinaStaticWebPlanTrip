@@ -15,6 +15,10 @@ import { SHANGHAI_DAY_01 } from "./data/shanghai/day01";
 import { SHANGHAI_DAY_02 } from "./data/shanghai/day02";
 import { SHANGHAI_DAY_03 } from "./data/shanghai/day03";
 import { SHANGHAI_DAY_04 } from "./data/shanghai/day04";
+import { BEIJING_DAY_06 } from "./data/beijing/day06";
+import { BEIJING_DAY_07 } from "./data/beijing/day07";
+import { BEIJING_DAY_08 } from "./data/beijing/day08";
+import { BEIJING_DAY_09 } from "./data/beijing/day09";
 import type { DayPlan } from "./types/itinerary";
 import { useItineraryStorage } from "./hooks/useItineraryStorage";
 import { useDayProgress } from "./hooks/useDayProgress";
@@ -25,7 +29,12 @@ const DAY_PLANS: Record<number, DayPlan> = {
   2: SHANGHAI_DAY_02,
   3: SHANGHAI_DAY_03,
   4: SHANGHAI_DAY_04,
+  6: BEIJING_DAY_06,
+  7: BEIJING_DAY_07,
+  8: BEIJING_DAY_08,
+  9: BEIJING_DAY_09,
 };
+
 
 export function App() {
   const [activeDayNumber, setActiveDayNumber] = useState<number>(() => getActiveDay());
