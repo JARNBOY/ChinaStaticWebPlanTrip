@@ -224,7 +224,7 @@ export const BEIJING_DAY_06: DayPlan = {
       address: "北京市东城区前门大街商圈",
       mapQuery: "L酒店(北京天安门广场前门大街店)",
       mapUrl: "https://surl.amap.com/lcwcxyu15h2z",
-      note: "Hotel rest. Tomorrow is an early 05:30 wakeup for Mutianyu Great Wall! Happy New Year 2027!",
+      note: "Hotel rest. Tomorrow is Day 7: early wakeup for Tiananmen Square & Forbidden City! Happy New Year 2027!",
       checkable: true,
       coords: { lat: 39.8970, lng: 116.3980 },
     },
