@@ -24,6 +24,7 @@ import type { DayPlan } from "./types/itinerary";
 import { useItineraryStorage } from "./hooks/useItineraryStorage";
 import { useDayProgress } from "./hooks/useDayProgress";
 import { getActiveDay, setActiveDay, checkAndMigratePlanVersion } from "./utils/storage";
+import { copyDayForGoogleSheets } from "./utils/sheetExport";
 
 // Ensure visitors get the latest updated Day 1–5 Master Plan
 checkAndMigratePlanVersion();
@@ -87,6 +88,15 @@ export function App() {
     window.print();
   };
 
+  const handleCopySheet = async () => {
+    const success = await copyDayForGoogleSheets(activeDayPlan.date, entries);
+    if (success) {
+      showToast(`📋 Copied Day ${activeDayPlan.dayNumber} table for Google Sheets! Paste into cell A12.`);
+    } else {
+      showToast("❌ Unable to copy to clipboard.");
+    }
+  };
+
   const handleSelectStop = (stopId: string) => {
     const el = document.getElementById(`entry-${stopId}`);
     if (el) {
@@ -107,6 +117,7 @@ export function App() {
           dayNumber={activeDayPlan.dayNumber}
           totalDays={DAYS_CATALOG.length}
           onPrint={handlePrint}
+          onCopySheet={handleCopySheet}
           onOpenEditor={() => setIsEditorOpen(true)}
           onResetProgress={resetProgress}
         />

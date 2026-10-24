@@ -1,11 +1,12 @@
 import React, { useMemo } from "react";
-import { Printer, Edit3, RotateCcw } from "lucide-react";
+import { Printer, Edit3, RotateCcw, FileSpreadsheet } from "lucide-react";
 
 interface HeaderProps {
   date: string;
   dayNumber: number;
   totalDays: number;
   onPrint: () => void;
+  onCopySheet?: () => void;
   onOpenEditor: () => void;
   onResetProgress: () => void;
 }
@@ -15,6 +16,7 @@ export const Header: React.FC<HeaderProps> = ({
   dayNumber,
   totalDays,
   onPrint,
+  onCopySheet,
   onOpenEditor,
   onResetProgress,
 }) => {
@@ -65,6 +67,19 @@ export const Header: React.FC<HeaderProps> = ({
               <Printer size={16} />
               <span className="btn-label">PDF</span>
             </button>
+
+            {onCopySheet && (
+              <button
+                type="button"
+                className="icon-btn"
+                title="Copy table for Google Sheets (A12)"
+                aria-label="Copy itinerary for Google Sheets"
+                onClick={onCopySheet}
+              >
+                <FileSpreadsheet size={16} />
+                <span className="btn-label">Sheet</span>
+              </button>
+            )}
 
             <button
               type="button"
