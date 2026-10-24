@@ -3,7 +3,7 @@ import type { TimelineEntry } from "../types/itinerary";
 const COMPLETED_PREFIX = "china_trip_completed_day_";
 const CUSTOM_ITEMS_PREFIX = "china_trip_custom_day_";
 const ACTIVE_DAY_KEY = "china_trip_active_day";
-export const APP_PLAN_VERSION = "2026-10-24-days1-5-master-v5";
+export const APP_PLAN_VERSION = "2026-10-25-day3-chuanchuanxiang-v6";
 const PLAN_VERSION_KEY = "china_trip_plan_version";
 
 export function checkAndMigratePlanVersion(): void {
