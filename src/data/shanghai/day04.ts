@@ -55,7 +55,7 @@ export const SHANGHAI_DAY_04: DayPlan = {
       mapUrl: "https://surl.amap.com/23VeALK11s44Y",
       imageUrl: "/images/shanghai/disneyland-entrance.jpg",
       imageAlt: "Shanghai Disneyland main entrance gates with Steamboat Willie fountain",
-      note: "Have physical original passports and digital Early Park Entry Pass ready in the official Shanghai Disney app. Turnstiles typically open 60 min before general public (around 07:15–07:30). Move swiftly past Mickey Avenue directly toward Zootopia!",
+      note: "⏰ EARLY PASS BOOKING TIP: Purchase in official Shanghai Disney Resort App 7–9 days ahead (20 or 22 Dec 2026). Releases at 00:00 China Time = 22:50 Thailand Time (set alarm at 22:50 TH in night before!). Have physical original passports ready at Disneytown priority turnstiles. Turnstiles typically open 60 min before general public (around 07:15–07:30). Move swiftly past Mickey Avenue directly toward Zootopia!",
       checkable: true,
       coords: { lat: 31.1435, lng: 121.6585 },
     },

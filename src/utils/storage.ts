@@ -3,6 +3,23 @@ import type { TimelineEntry } from "../types/itinerary";
 const COMPLETED_PREFIX = "china_trip_completed_day_";
 const CUSTOM_ITEMS_PREFIX = "china_trip_custom_day_";
 const ACTIVE_DAY_KEY = "china_trip_active_day";
+export const APP_PLAN_VERSION = "2026-10-24-days1-5-master-v5";
+const PLAN_VERSION_KEY = "china_trip_plan_version";
+
+export function checkAndMigratePlanVersion(): void {
+  try {
+    const currentVer = localStorage.getItem(PLAN_VERSION_KEY);
+    if (currentVer !== APP_PLAN_VERSION) {
+      // Clear stale day customizations so visitors automatically receive updated Days 1-5
+      for (let i = 1; i <= 9; i++) {
+        localStorage.removeItem(`${CUSTOM_ITEMS_PREFIX}${i}`);
+      }
+      localStorage.setItem(PLAN_VERSION_KEY, APP_PLAN_VERSION);
+    }
+  } catch (e) {
+    console.error("Migration error:", e);
+  }
+}
 
 export function loadCompletedIds(dayNumber: number): string[] {
   try {
