@@ -9,6 +9,7 @@ import { ProgressBar } from "./components/ProgressBar";
 import { Timeline } from "./components/Timeline";
 import { NextStopBar } from "./components/NextStopBar";
 import { PlanEditorModal } from "./components/PlanEditorModal";
+import { NeedToKnowPage } from "./components/NeedToKnowPage";
 import { Toast } from "./components/Toast";
 import { DAYS_CATALOG } from "./data/daysCatalog";
 import { SHANGHAI_DAY_01 } from "./data/shanghai/day01";
@@ -41,9 +42,9 @@ const DAY_PLANS: Record<number, DayPlan> = {
   9: BEIJING_DAY_09,
 };
 
-
 export function App() {
   const [activeDayNumber, setActiveDayNumber] = useState<number>(() => getActiveDay());
+  const [isNeedToKnowActive, setIsNeedToKnowActive] = useState<boolean>(false);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -80,6 +81,7 @@ export function App() {
   }, [toastMessage]);
 
   const handleSelectDay = (dayNum: number) => {
+    setIsNeedToKnowActive(false);
     setActiveDayNumber(dayNum);
     setActiveDay(dayNum);
   };
@@ -116,62 +118,71 @@ export function App() {
           date={activeDayPlan.date}
           dayNumber={activeDayPlan.dayNumber}
           totalDays={DAYS_CATALOG.length}
+          isNeedToKnow={isNeedToKnowActive}
           onPrint={handlePrint}
           onCopySheet={handleCopySheet}
           onOpenEditor={() => setIsEditorOpen(true)}
           onResetProgress={resetProgress}
         />
 
-        {/* 10-Day Navigation (Shanghai 1-6, Beijing 7-10) */}
+        {/* 10-Day Navigation (Shanghai 1-5, Beijing 6-9) + Need to Know */}
         <DayNavigation
           days={DAYS_CATALOG}
           activeDay={activeDayNumber}
           onSelectDay={handleSelectDay}
+          isNeedToKnowActive={isNeedToKnowActive}
+          onSelectNeedToKnow={() => setIsNeedToKnowActive(true)}
         />
 
         {/* Main Editorial Card */}
         <main className="journal-editorial-card">
-          {/* Day Title & Route */}
-          <DayHeader
-            dayNumber={activeDayPlan.dayNumber}
-            city={activeDayPlan.city}
-            routeTitle={activeDayPlan.routeTitle}
-            routeSubtitle={activeDayPlan.routeSubtitle}
-          />
+          {isNeedToKnowActive ? (
+            <NeedToKnowPage onBackToItinerary={() => setIsNeedToKnowActive(false)} />
+          ) : (
+            <>
+              {/* Day Title & Route */}
+              <DayHeader
+                dayNumber={activeDayPlan.dayNumber}
+                city={activeDayPlan.city}
+                routeTitle={activeDayPlan.routeTitle}
+                routeSubtitle={activeDayPlan.routeSubtitle}
+              />
 
-          {/* Top Compact Route Summary */}
-          <RouteSummary summary={activeDayPlan.summary} />
+              {/* Top Compact Route Summary */}
+              <RouteSummary summary={activeDayPlan.summary} />
 
-          {/* Visual Location Preview Reel with 2s Auto-Scroll & Click-to-Scroll */}
-          <LocationCarousel
-            entries={entries}
-            dayNumber={activeDayPlan.dayNumber}
-            onSelectStop={handleSelectStop}
-          />
+              {/* Visual Location Preview Reel with 2s Auto-Scroll & Click-to-Scroll */}
+              <LocationCarousel
+                entries={entries}
+                dayNumber={activeDayPlan.dayNumber}
+                onSelectStop={handleSelectStop}
+              />
 
-          {/* Hotel Information & Amap Route */}
-          {activeDayPlan.hotel && (
-            <HotelCard
-              hotel={activeDayPlan.hotel}
-              onShowToast={showToast}
-            />
+              {/* Hotel Information & Amap Route */}
+              {activeDayPlan.hotel && (
+                <HotelCard
+                  hotel={activeDayPlan.hotel}
+                  onShowToast={showToast}
+                />
+              )}
+
+              {/* Progress Tracker (e.g. 0 / 17 completed) */}
+              <ProgressBar
+                completedCount={completedCount}
+                totalStops={totalStops}
+                percent={percent}
+              />
+
+              {/* Continuous Vertical Timeline: 17 Stops + 13 Routes */}
+              <Timeline
+                entries={entries}
+                completedIds={completedIds}
+                nextStopId={nextUncompletedStop?.id}
+                onToggle={toggleComplete}
+                onShowToast={showToast}
+              />
+            </>
           )}
-
-          {/* Progress Tracker (e.g. 0 / 17 completed) */}
-          <ProgressBar
-            completedCount={completedCount}
-            totalStops={totalStops}
-            percent={percent}
-          />
-
-          {/* Continuous Vertical Timeline: 17 Stops + 13 Routes */}
-          <Timeline
-            entries={entries}
-            completedIds={completedIds}
-            nextStopId={nextUncompletedStop?.id}
-            onToggle={toggleComplete}
-            onShowToast={showToast}
-          />
         </main>
 
         {/* Journal Footer */}
@@ -180,6 +191,14 @@ export function App() {
             China Trip Itinerary · Designed for mobile exploration & mindful walking
           </p>
           <div className="footer-actions">
+            <button
+              type="button"
+              className="footer-link-btn"
+              onClick={() => setIsNeedToKnowActive((prev) => !prev)}
+            >
+              {isNeedToKnowActive ? "View Day Itineraries" : "View Need to Know"}
+            </button>
+            <span className="footer-sep">·</span>
             <button
               type="button"
               className="footer-link-btn"
@@ -199,12 +218,14 @@ export function App() {
         </footer>
       </div>
 
-      {/* Sticky Bottom Next Stop Bar for Mobile */}
-      <NextStopBar
-        nextStop={nextUncompletedStop}
-        isAllCompleted={isAllCompleted}
-        onShowToast={showToast}
-      />
+      {/* Sticky Bottom Next Stop Bar for Mobile (Only when on Day itinerary) */}
+      {!isNeedToKnowActive && (
+        <NextStopBar
+          nextStop={nextUncompletedStop}
+          isAllCompleted={isAllCompleted}
+          onShowToast={showToast}
+        />
+      )}
 
       {/* Lightweight V1 Editor Modal */}
       <PlanEditorModal

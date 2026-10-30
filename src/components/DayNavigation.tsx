@@ -4,12 +4,16 @@ interface DayNavigationProps {
   days: DayMeta[];
   activeDay: number;
   onSelectDay: (dayNumber: number) => void;
+  isNeedToKnowActive?: boolean;
+  onSelectNeedToKnow?: () => void;
 }
 
 export const DayNavigation: React.FC<DayNavigationProps> = ({
   days,
   activeDay,
   onSelectDay,
+  isNeedToKnowActive = false,
+  onSelectNeedToKnow,
 }) => {
   const shanghaiDays = days.filter((d) => d.city === "Shanghai");
   const beijingDays = days.filter((d) => d.city === "Beijing");
@@ -19,7 +23,7 @@ export const DayNavigation: React.FC<DayNavigationProps> = ({
       <span className="nav-city-label">{title}</span>
       <div className="nav-pills-row">
         {groupDays.map((day) => {
-          const isActive = day.dayNumber === activeDay;
+          const isActive = !isNeedToKnowActive && day.dayNumber === activeDay;
           const isReady = day.status === "ready";
           const padded = String(day.dayNumber).padStart(2, "0");
 
@@ -59,6 +63,23 @@ export const DayNavigation: React.FC<DayNavigationProps> = ({
         {renderGroup("SHANGHAI", shanghaiDays)}
         <div className="nav-divider" />
         {renderGroup("BEIJING", beijingDays)}
+        {onSelectNeedToKnow && (
+          <>
+            <div className="nav-divider" />
+            <button
+              type="button"
+              className={`day-nav-pill need-to-know-pill ${isNeedToKnowActive ? "active" : ""}`}
+              onClick={onSelectNeedToKnow}
+              title="Important Pre-Trip Notes, Tickets Checklist & Deadlines"
+            >
+              <span className="pill-icon">📌</span>
+              <span className="pill-text-strong">Need to Know</span>
+              <span className="pill-dot" aria-hidden="true">
+                {isNeedToKnowActive ? "●" : "○"}
+              </span>
+            </button>
+          </>
+        )}
       </div>
     </nav>
   );
