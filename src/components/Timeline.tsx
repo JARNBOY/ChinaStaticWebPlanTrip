@@ -7,6 +7,7 @@ interface TimelineProps {
   completedIds: Set<string>;
   nextStopId?: string | null;
   onToggle: (id: string) => void;
+  onOpenPhoto?: (id: string) => void;
   onShowToast: (message: string) => void;
 }
 
@@ -15,6 +16,7 @@ export const Timeline: React.FC<TimelineProps> = ({
   completedIds,
   nextStopId,
   onToggle,
+  onOpenPhoto,
   onShowToast,
 }) => {
   return (
@@ -34,6 +36,7 @@ export const Timeline: React.FC<TimelineProps> = ({
                 isCompleted={isCompleted}
                 isNext={isNext}
                 onToggle={onToggle}
+                onOpenPhoto={onOpenPhoto}
                 onShowToast={onShowToast}
                 isLast={isLast}
               />

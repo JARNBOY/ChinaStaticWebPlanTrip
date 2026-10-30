@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { Printer, Edit3, RotateCcw, FileSpreadsheet } from "lucide-react";
+import { useLanguage } from "../context/LanguageContext";
 
 interface HeaderProps {
   date: string;
@@ -22,14 +23,25 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenEditor,
   onResetProgress,
 }) => {
-  // Format date: "2026-12-25" -> "DECEMBER 25, 2026"
+  const { language, setLanguage, t } = useLanguage();
+
+  // Format date: "2026-12-25" -> localized date
   const formattedDate = useMemo(() => {
     if (isNeedToKnow) {
-      return "DEC 25, 2026 – JAN 03, 2027";
+      return language === "th"
+        ? "25 ธ.ค. 2569 – 03 ม.ค. 2570"
+        : "DEC 25, 2026 – JAN 03, 2027";
     }
     try {
       const [year, month, day] = date.split("-").map(Number);
       const d = new Date(year, month - 1, day);
+      if (language === "th") {
+        return d.toLocaleDateString("th-TH", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        });
+      }
       return d
         .toLocaleDateString("en-US", {
           month: "long",
@@ -38,9 +50,9 @@ export const Header: React.FC<HeaderProps> = ({
         })
         .toUpperCase();
     } catch {
-      return "DECEMBER 25, 2026";
+      return language === "th" ? "25 ธันวาคม 2569" : "DECEMBER 25, 2026";
     }
-  }, [date, isNeedToKnow]);
+  }, [date, isNeedToKnow, language]);
 
   const paddedDay = String(dayNumber).padStart(2, "0");
   const paddedTotal = String(totalDays).padStart(2, "0");
@@ -49,7 +61,7 @@ export const Header: React.FC<HeaderProps> = ({
     <header className="journal-header">
       <div className="journal-header-content">
         <div className="journal-brand">
-          <h1 className="journal-logo">China, on foot</h1>
+          <h1 className="journal-logo">{t.brandTitle}</h1>
           <p className="journal-date">{formattedDate}</p>
         </div>
 
@@ -57,12 +69,14 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="day-badge-group">
             {isNeedToKnow ? (
               <>
-                <span className="day-pill ntk-badge">ESSENTIALS</span>
-                <span className="day-counter">NEED TO KNOW</span>
+                <span className="day-pill ntk-badge">{t.essentialsPill}</span>
+                <span className="day-counter">{t.needToKnowCounter}</span>
               </>
             ) : (
               <>
-                <span className="day-pill">DAY {paddedDay}</span>
+                <span className="day-pill">
+                  {t.dayPill} {paddedDay}
+                </span>
                 <span className="day-counter">
                   {paddedDay} / {paddedTotal}
                 </span>
@@ -71,6 +85,28 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
 
           <div className="header-icon-buttons no-print">
+            {/* Language Switcher Control */}
+            <div className="lang-switcher-pill" role="group" aria-label="Language selection">
+              <button
+                type="button"
+                className={`lang-btn ${language === "th" ? "active" : ""}`}
+                onClick={() => setLanguage("th")}
+                title="เปลี่ยนเป็นภาษาไทย (TH)"
+                aria-pressed={language === "th"}
+              >
+                TH
+              </button>
+              <button
+                type="button"
+                className={`lang-btn ${language === "en" ? "active" : ""}`}
+                onClick={() => setLanguage("en")}
+                title="Switch to English (EN)"
+                aria-pressed={language === "en"}
+              >
+                EN
+              </button>
+            </div>
+
             <button
               type="button"
               className="icon-btn"
@@ -79,7 +115,7 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={onPrint}
             >
               <Printer size={16} />
-              <span className="btn-label">PDF</span>
+              <span className="btn-label">{t.btnPdf}</span>
             </button>
 
             {!isNeedToKnow && onCopySheet && (
@@ -91,7 +127,7 @@ export const Header: React.FC<HeaderProps> = ({
                 onClick={onCopySheet}
               >
                 <FileSpreadsheet size={16} />
-                <span className="btn-label">Sheet</span>
+                <span className="btn-label">{t.btnSheet}</span>
               </button>
             )}
 
@@ -105,7 +141,7 @@ export const Header: React.FC<HeaderProps> = ({
                   onClick={onOpenEditor}
                 >
                   <Edit3 size={16} />
-                  <span className="btn-label">Edit</span>
+                  <span className="btn-label">{t.btnEdit}</span>
                 </button>
 
                 <button
@@ -114,7 +150,7 @@ export const Header: React.FC<HeaderProps> = ({
                   title="Reset progress"
                   aria-label="Reset completed checkboxes"
                   onClick={() => {
-                    if (window.confirm("Reset all checkboxes for this day?")) {
+                    if (window.confirm(t.resetDayConfirm)) {
                       onResetProgress();
                     }
                   }}

@@ -1,14 +1,16 @@
 import React, { useState } from "react";
-import { Check, Map, Copy, AlertTriangle, Clock, Navigation, DollarSign, MapPin, ExternalLink } from "lucide-react";
+import { Check, Map, Copy, AlertTriangle, Clock, Navigation, DollarSign, MapPin, ExternalLink, Maximize2 } from "lucide-react";
 import type { StopTimelineEntry } from "../types/itinerary";
 import { openMapLocation } from "../utils/maps";
 import { copyForDriverOrDiDi } from "../utils/didi";
+import { useLanguage } from "../context/LanguageContext";
 
 interface TimelineStopProps {
   entry: StopTimelineEntry;
   isCompleted: boolean;
   isNext: boolean;
   onToggle: (id: string) => void;
+  onOpenPhoto?: (id: string) => void;
   onShowToast: (message: string) => void;
   isLast: boolean;
 }
@@ -18,9 +20,11 @@ export const TimelineStop: React.FC<TimelineStopProps> = ({
   isCompleted,
   isNext,
   onToggle,
+  onOpenPhoto,
   onShowToast,
   isLast,
 }) => {
+  const { t } = useLanguage();
   const [imgError, setImgError] = useState(false);
 
   const handleCopyChinese = async () => {
@@ -80,17 +84,17 @@ export const TimelineStop: React.FC<TimelineStopProps> = ({
           <span className="checkpoint-time">{entry.time}</span>
 
           <div className="card-badges">
-            <span className="badge-pill stop-pill">Stop {paddedNum}</span>
+            <span className="badge-pill stop-pill">{t.stopNum(paddedNum)}</span>
             {entry.recheck && (
               <span className="badge-pill warning-pill" title="Schedule or ticket availability needs confirmation">
                 <AlertTriangle size={11} />
-                <span>RECHECK</span>
+                <span>{t.recheckBadge}</span>
               </span>
             )}
           </div>
         </div>
 
-        {/* Titles */}
+        {/* Titles - Kept authentic and untranslated as requested */}
         <div className="card-title-group" onClick={() => onToggle(entry.id)} role="button" tabIndex={0}>
           <h4 className="stop-english-title">{entry.title}</h4>
           {entry.chineseTitle && (
@@ -100,7 +104,11 @@ export const TimelineStop: React.FC<TimelineStopProps> = ({
 
         {/* Destination Photo */}
         {entry.imageUrl && !imgError && (
-          <figure className="stop-photo-container">
+          <figure
+            className="stop-photo-container clickable"
+            onClick={() => onOpenPhoto && onOpenPhoto(entry.id)}
+            title="Click to view full image"
+          >
             <img
               src={entry.imageUrl}
               alt={entry.imageAlt || entry.title}
@@ -108,6 +116,10 @@ export const TimelineStop: React.FC<TimelineStopProps> = ({
               loading="lazy"
               onError={() => setImgError(true)}
             />
+            <div className="stop-photo-zoom-hint" aria-hidden="true">
+              <Maximize2 size={13} />
+              <span>{t.fullPhoto}</span>
+            </div>
           </figure>
         )}
 
@@ -117,7 +129,7 @@ export const TimelineStop: React.FC<TimelineStopProps> = ({
             <div className="detail-row">
               <dt className="detail-dt">
                 <Clock size={12} className="detail-icon" />
-                <span>Duration</span>
+                <span>{t.labelDuration}</span>
               </dt>
               <dd className="detail-dd">{entry.duration}</dd>
             </div>
@@ -127,7 +139,7 @@ export const TimelineStop: React.FC<TimelineStopProps> = ({
             <div className="detail-row">
               <dt className="detail-dt">
                 <Navigation size={12} className="detail-icon" />
-                <span>Transport</span>
+                <span>{t.labelTransport}</span>
               </dt>
               <dd className="detail-dd">{entry.transport}</dd>
             </div>
@@ -137,7 +149,7 @@ export const TimelineStop: React.FC<TimelineStopProps> = ({
             <div className="detail-row">
               <dt className="detail-dt">
                 <DollarSign size={12} className="detail-icon" />
-                <span>Cost</span>
+                <span>{t.labelCost}</span>
               </dt>
               <dd className="detail-dd">{entry.cost}</dd>
             </div>
@@ -147,7 +159,7 @@ export const TimelineStop: React.FC<TimelineStopProps> = ({
             <div className="detail-row">
               <dt className="detail-dt">
                 <MapPin size={12} className="detail-icon" />
-                <span>Address</span>
+                <span>{t.labelAddress}</span>
               </dt>
               <dd className="detail-dd address-dd">{entry.address}</dd>
             </div>
@@ -156,7 +168,7 @@ export const TimelineStop: React.FC<TimelineStopProps> = ({
           {entry.note && (
             <div className="detail-row note-row">
               <dt className="detail-dt">
-                <span>Note</span>
+                <span>{t.labelNote}</span>
               </dt>
               <dd className="detail-dd note-dd">{entry.note}</dd>
             </div>
@@ -174,7 +186,7 @@ export const TimelineStop: React.FC<TimelineStopProps> = ({
               title="Open place in Amap (Gaode)"
             >
               <Navigation size={13} className="nav-arrow" />
-              <span>Open Amap</span>
+              <span>{t.openAmap}</span>
               <ExternalLink size={10} />
             </a>
           ) : (
@@ -185,7 +197,7 @@ export const TimelineStop: React.FC<TimelineStopProps> = ({
               title="Open destination in Apple/Google/Amap"
             >
               <Map size={13} />
-              <span>Open Map</span>
+              <span>{t.openMap}</span>
             </button>
           )}
 
@@ -212,7 +224,7 @@ export const TimelineStop: React.FC<TimelineStopProps> = ({
             title="Copy Chinese place and address to show driver or paste in DiDi"
           >
             <Copy size={13} />
-            <span>Copy Chinese (DiDi)</span>
+            <span>{t.copyDidi}</span>
           </button>
         </div>
       </div>

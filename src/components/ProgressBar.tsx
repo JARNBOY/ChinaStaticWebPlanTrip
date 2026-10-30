@@ -1,4 +1,5 @@
 import React from "react";
+import { useLanguage } from "../context/LanguageContext";
 
 interface ProgressBarProps {
   completedCount: number;
@@ -11,12 +12,14 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   totalStops,
   percent,
 }) => {
+  const { t } = useLanguage();
+
   return (
     <section className="progress-section" aria-label="Itinerary Checklist Progress">
       <div className="progress-label-row">
-        <span className="progress-label">Progress</span>
+        <span className="progress-label">{t.progressLabel}</span>
         <span className="progress-count">
-          <strong>{completedCount}</strong> / {totalStops} completed
+          <strong>{completedCount}</strong> / {totalStops} {t.progressCompleted}
         </span>
       </div>
       <div

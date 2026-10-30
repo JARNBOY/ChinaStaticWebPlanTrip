@@ -18,6 +18,7 @@ import {
   SURVIVAL_TIPS,
   type TicketItem,
 } from "../data/needToKnowData";
+import { useLanguage } from "../context/LanguageContext";
 
 const STORAGE_KEY = "china_trip_need_to_know_checklist_v1";
 
@@ -26,6 +27,7 @@ interface NeedToKnowPageProps {
 }
 
 export const NeedToKnowPage: React.FC<NeedToKnowPageProps> = ({ onBackToItinerary }) => {
+  const { t, language } = useLanguage();
   // Checklist state stored in localStorage
   const [checkedIds, setCheckedIds] = useState<Record<string, boolean>>(() => {
     try {
@@ -76,7 +78,7 @@ export const NeedToKnowPage: React.FC<NeedToKnowPageProps> = ({ onBackToItinerar
   };
 
   const handleResetChecklist = () => {
-    if (window.confirm("ต้องการรีเซ็ตสถานะตั๋วกลับเป็นค่าเริ่มต้นตามที่ระบุใน Google Doc หรือไม่?")) {
+    if (window.confirm(t.ntkResetConfirm)) {
       const initial: Record<string, boolean> = {};
       TICKET_ITEMS.forEach((item) => {
         initial[item.id] = item.initialStatus === "purchased";
@@ -114,32 +116,31 @@ export const NeedToKnowPage: React.FC<NeedToKnowPageProps> = ({ onBackToItinerar
       {/* Editorial Header Banner */}
       <section className="ntk-hero-card">
         <div className="ntk-hero-badge">
-          <span className="ntk-pill">TRIP ESSENTIALS & TICKETS</span>
-          <span className="ntk-dates">25 DEC 2026 – 03 JAN 2027</span>
+          <span className="ntk-pill">{t.essentialsPill}</span>
+          <span className="ntk-dates">
+            {language === "th" ? "25 ธ.ค. 2569 – 03 ม.ค. 2570" : "25 DEC 2026 – 03 JAN 2027"}
+          </span>
         </div>
-        <h2 className="ntk-hero-title">Things We Need to Know</h2>
-        <p className="ntk-hero-subtitle">
-          สรุปแผนการจองตั๋ว, กำหนดเวลาที่ต้องแย่งกดก่อนวันเดินทาง, ลายแทงร้านอาหาร & คาเฟ่ Boy & Jik
-          และข้อควรระวังสำคัญสำหรับเซี่ยงไฮ้และปักกิ่ง
-        </p>
+        <h2 className="ntk-hero-title">{t.ntkHeroTitle}</h2>
+        <p className="ntk-hero-subtitle">{t.ntkHeroSubtitle}</p>
 
         {/* Quick Stats Grid */}
         <div className="ntk-stats-grid">
           <div className="ntk-stat-item">
             <span className="ntk-stat-value">{purchasedCount} / {totalTickets}</span>
-            <span className="ntk-stat-label">ตั๋วที่เตรียมพร้อมแล้ว</span>
+            <span className="ntk-stat-label">{t.ntkStatReady}</span>
           </div>
           <div className="ntk-stat-item alert">
             <span className="ntk-stat-value">{mustBookPending}</span>
-            <span className="ntk-stat-label">ตั๋วที่ต้องแย่งกดตามวัน</span>
+            <span className="ntk-stat-label">{t.ntkStatMustBook}</span>
           </div>
           <div className="ntk-stat-item">
             <span className="ntk-stat-value">7</span>
-            <span className="ntk-stat-label">ตั๋วที่ซื้อหน้างานได้</span>
+            <span className="ntk-stat-label">{t.ntkStatOnSite}</span>
           </div>
           <div className="ntk-stat-item">
-            <span className="ntk-stat-value">10 วัน</span>
-            <span className="ntk-stat-label">ระยะเวลาทริป (5 SH + 4 BJ)</span>
+            <span className="ntk-stat-value">{language === "th" ? "10 วัน" : "10 Days"}</span>
+            <span className="ntk-stat-label">{t.ntkStatTripDays}</span>
           </div>
         </div>
 
@@ -150,7 +151,7 @@ export const NeedToKnowPage: React.FC<NeedToKnowPageProps> = ({ onBackToItinerar
               className="ntk-back-btn"
               onClick={onBackToItinerary}
             >
-              ← กลับไปดูแผนการเดินทางรายวัน (Day 1 – 9)
+              {t.ntkBackToItinerary}
             </button>
           </div>
         )}
@@ -164,7 +165,7 @@ export const NeedToKnowPage: React.FC<NeedToKnowPageProps> = ({ onBackToItinerar
           onClick={() => setActiveTab("tickets")}
         >
           <Ticket size={16} />
-          <span>ตั๋ว & เช็คลิสต์ ({purchasedCount}/{totalTickets})</span>
+          <span>{t.ntkTabTickets} ({purchasedCount}/{totalTickets})</span>
         </button>
         <button
           type="button"
@@ -172,7 +173,7 @@ export const NeedToKnowPage: React.FC<NeedToKnowPageProps> = ({ onBackToItinerar
           onClick={() => setActiveTab("deadlines")}
         >
           <Clock size={16} />
-          <span>ไทม์ไลน์วันเปิดจอง</span>
+          <span>{t.ntkTabDeadlines}</span>
         </button>
         <button
           type="button"
@@ -180,7 +181,7 @@ export const NeedToKnowPage: React.FC<NeedToKnowPageProps> = ({ onBackToItinerar
           onClick={() => setActiveTab("food")}
         >
           <Utensils size={16} />
-          <span>ของกิน & คาเฟ่ ({DINING_ITEMS.length})</span>
+          <span>{t.ntkTabFood} ({DINING_ITEMS.length})</span>
         </button>
         <button
           type="button"
@@ -188,7 +189,7 @@ export const NeedToKnowPage: React.FC<NeedToKnowPageProps> = ({ onBackToItinerar
           onClick={() => setActiveTab("survival")}
         >
           <ShieldCheck size={16} />
-          <span>ข้อควรรู้ & เตรียมตัว</span>
+          <span>{t.ntkTabSurvival}</span>
         </button>
       </div>
 
@@ -199,17 +200,19 @@ export const NeedToKnowPage: React.FC<NeedToKnowPageProps> = ({ onBackToItinerar
             <div>
               <h3 className="ntk-section-title">Ticket & Booking Master Checklist</h3>
               <p className="ntk-section-desc">
-                สามารถคลิกที่กล่องเพื่ออัปเดตสถานะการซื้อ ระบบจะบันทึกสถานะลงในเครื่องอัตโนมัติ
+                {language === "th"
+                  ? "สามารถคลิกที่กล่องเพื่ออัปเดตสถานะการซื้อ ระบบจะบันทึกสถานะลงในเครื่องอัตโนมัติ"
+                  : "Tap checkboxes to track bookings. Progress is automatically saved locally."}
               </p>
             </div>
             <button
               type="button"
               className="ntk-reset-btn"
-              title="รีเซ็ตกลับเป็นค่าเริ่มต้นตาม Google Doc"
+              title={t.ntkResetConfirm}
               onClick={handleResetChecklist}
             >
               <RotateCcw size={14} />
-              <span>รีเซ็ตสถานะ</span>
+              <span>{t.ntkResetBtn}</span>
             </button>
           </div>
 
@@ -220,28 +223,28 @@ export const NeedToKnowPage: React.FC<NeedToKnowPageProps> = ({ onBackToItinerar
               className={`ntk-filter-pill ${ticketFilter === "all" ? "active" : ""}`}
               onClick={() => setTicketFilter("all")}
             >
-              ทั้งหมด ({TICKET_ITEMS.length})
+              {t.ntkFilterAll} ({TICKET_ITEMS.length})
             </button>
             <button
               type="button"
               className={`ntk-filter-pill alert ${ticketFilter === "must_book" ? "active" : ""}`}
               onClick={() => setTicketFilter("must_book")}
             >
-              🔴 ต้องจองล่วงหน้าตามวัน (5)
+              {t.ntkFilterMustBook} (5)
             </button>
             <button
               type="button"
               className={`ntk-filter-pill success ${ticketFilter === "purchased" ? "active" : ""}`}
               onClick={() => setTicketFilter("purchased")}
             >
-              ✅ ซื้อเรียบร้อยแล้ว ({purchasedCount})
+              {t.ntkFilterPurchased} ({purchasedCount})
             </button>
             <button
               type="button"
               className={`ntk-filter-pill subtle ${ticketFilter === "on_site" ? "active" : ""}`}
               onClick={() => setTicketFilter("on_site")}
             >
-              🟡 ซื้อหน้างาน (7)
+              {t.ntkFilterOnSite} (7)
             </button>
           </div>
 
@@ -279,25 +282,25 @@ export const NeedToKnowPage: React.FC<NeedToKnowPageProps> = ({ onBackToItinerar
 
                         {ticket.initialStatus === "must_book" && (
                           <span className="ntk-status-pill alert">
-                            <Clock size={12} /> ต้องจองล่วงหน้า
+                            <Clock size={12} /> {language === "th" ? "ต้องจองล่วงหน้า" : "Must Book"}
                           </span>
                         )}
                         {ticket.initialStatus === "purchased" && (
                           <span className="ntk-status-pill success">
-                            <CheckCircle2 size={12} /> ซื้อแล้ว
+                            <CheckCircle2 size={12} /> {language === "th" ? "ซื้อแล้ว" : "Purchased"}
                           </span>
                         )}
                         {ticket.initialStatus === "on_site" && (
                           <span className="ntk-status-pill on-site">
-                            ซื้อหน้างาน {ticket.priceInfo ? `(${ticket.priceInfo})` : ""}
+                            {language === "th" ? "ซื้อหน้างาน" : "On-site"} {ticket.priceInfo ? `(${ticket.priceInfo})` : ""}
                           </span>
                         )}
                       </div>
 
                       <h4 className="ntk-ticket-name">
-                        {ticket.nameTh}
+                        {language === "th" ? ticket.nameTh : ticket.nameEn}
                       </h4>
-                      <p className="ntk-ticket-sub">{ticket.nameEn}</p>
+                      <p className="ntk-ticket-sub">{language === "th" ? ticket.nameEn : ticket.nameTh}</p>
                       <p className="ntk-ticket-deadline">{ticket.deadlineDescription}</p>
                     </div>
 
@@ -315,12 +318,12 @@ export const NeedToKnowPage: React.FC<NeedToKnowPageProps> = ({ onBackToItinerar
                   {isExpanded && (
                     <div className="ntk-ticket-details">
                       <div className="ntk-detail-row">
-                        <span className="ntk-detail-label">ช่องทางจอง:</span>
+                        <span className="ntk-detail-label">{t.ntkBookingChannel}</span>
                         <span className="ntk-detail-val">{ticket.bookingChannel}</span>
                       </div>
                       {ticket.actionNote && (
                         <div className="ntk-detail-row highlight">
-                          <span className="ntk-detail-label">คำแนะนำ:</span>
+                          <span className="ntk-detail-label">{t.ntkAdvice}</span>
                           <span className="ntk-detail-val">{ticket.actionNote}</span>
                         </div>
                       )}
@@ -338,9 +341,9 @@ export const NeedToKnowPage: React.FC<NeedToKnowPageProps> = ({ onBackToItinerar
         <section className="ntk-tab-content">
           <div className="ntk-section-header">
             <div>
-              <h3 className="ntk-section-title">Critical Booking Deadlines</h3>
+              <h3 className="ntk-section-title">{t.ntkDeadlinesTitle}</h3>
               <p className="ntk-section-desc">
-                ไทม์ไลน์และวันที่ต้องตั้งนาฬิกาปลุกเพื่อกดจองตั๋วสำคัญล่วงหน้าตามเวลาไทย
+                {t.ntkDeadlinesSubtitle}
               </p>
             </div>
           </div>
@@ -437,9 +440,9 @@ export const NeedToKnowPage: React.FC<NeedToKnowPageProps> = ({ onBackToItinerar
         <section className="ntk-tab-content">
           <div className="ntk-section-header">
             <div>
-              <h3 className="ntk-section-title">Boy & Jik Curated Food & Cafe Guide</h3>
+              <h3 className="ntk-section-title">{t.ntkFoodTitle}</h3>
               <p className="ntk-section-desc">
-                รวมพิกัดร้านอาหาร เป็ดปักกิ่ง บุฟเฟต์เนื้อแกะ ติ่มซำ และคาเฟ่น่ารักตามที่ Boy & Jik คุยกัน
+                {t.ntkFoodSubtitle}
               </p>
             </div>
             <div className="ntk-city-filter-buttons">
@@ -448,7 +451,7 @@ export const NeedToKnowPage: React.FC<NeedToKnowPageProps> = ({ onBackToItinerar
                 className={`ntk-filter-btn ${foodCityFilter === "all" ? "active" : ""}`}
                 onClick={() => setFoodCityFilter("all")}
               >
-                ทั้งหมด
+                {t.filterAll}
               </button>
               <button
                 type="button"
@@ -479,12 +482,14 @@ export const NeedToKnowPage: React.FC<NeedToKnowPageProps> = ({ onBackToItinerar
                 <p className="ntk-food-loc">📍 {food.location}</p>
                 <p className="ntk-food-highlight">{food.highlight}</p>
                 {food.openingHours && (
-                  <p className="ntk-food-hours">🕒 เวลาเปิด: {food.openingHours}</p>
+                  <p className="ntk-food-hours">
+                    🕒 {language === "th" ? "เวลาเปิด: " : "Hours: "}{food.openingHours}
+                  </p>
                 )}
                 <div className="ntk-tags-row">
-                  {food.tags.map((t) => (
-                    <span key={t} className="ntk-tag-item">
-                      #{t}
+                  {food.tags.map((tag) => (
+                    <span key={tag} className="ntk-tag-item">
+                      #{tag}
                     </span>
                   ))}
                 </div>
@@ -499,9 +504,9 @@ export const NeedToKnowPage: React.FC<NeedToKnowPageProps> = ({ onBackToItinerar
         <section className="ntk-tab-content">
           <div className="ntk-section-header">
             <div>
-              <h3 className="ntk-section-title">China Travel Survival Kit & Essential Rules</h3>
+              <h3 className="ntk-section-title">{t.ntkSurvivalTitle}</h3>
               <p className="ntk-section-desc">
-                ข้อควรรู้และการเตรียมตัวเพื่อการเดินทางที่ราบรื่น ไร้กังวลในเซี่ยงไฮ้และปักกิ่ง
+                {t.ntkSurvivalSubtitle}
               </p>
             </div>
           </div>
@@ -517,8 +522,12 @@ export const NeedToKnowPage: React.FC<NeedToKnowPageProps> = ({ onBackToItinerar
                     {tip.category === "payment" && <Coffee size={20} />}
                   </div>
                   <div>
-                    <h4 className="ntk-survival-title">{tip.titleTh}</h4>
-                    <span className="ntk-survival-sub">{tip.titleEn}</span>
+                    <h4 className="ntk-survival-title">
+                      {language === "th" ? tip.titleTh : tip.titleEn}
+                    </h4>
+                    <span className="ntk-survival-sub">
+                      {language === "th" ? tip.titleEn : tip.titleTh}
+                    </span>
                   </div>
                 </div>
                 <p className="ntk-survival-desc">{tip.descriptionTh}</p>

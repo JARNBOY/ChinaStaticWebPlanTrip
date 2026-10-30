@@ -1,12 +1,15 @@
 import React from "react";
 import { Clock, MapPin, Car, Footprints, Train } from "lucide-react";
 import type { RouteSummaryInfo } from "../types/itinerary";
+import { useLanguage } from "../context/LanguageContext";
 
 interface RouteSummaryProps {
   summary: RouteSummaryInfo;
 }
 
 export const RouteSummary: React.FC<RouteSummaryProps> = ({ summary }) => {
+  const { t } = useLanguage();
+
   return (
     <section className="route-summary-card" aria-label="Day Route Summary">
       <div className="summary-meta-row">
@@ -18,7 +21,7 @@ export const RouteSummary: React.FC<RouteSummaryProps> = ({ summary }) => {
         <div className="summary-stat-item">
           <MapPin size={14} className="stat-icon" />
           <span className="stat-text">
-            {summary.stopsCount} stops ({summary.estimatedDuration})
+            {summary.stopsCount} {t.summaryStops} ({summary.estimatedDuration})
           </span>
         </div>
       </div>

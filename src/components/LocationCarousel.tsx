@@ -1,11 +1,13 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
-import { ChevronLeft, ChevronRight, Play, Pause, Compass } from "lucide-react";
+import { ChevronLeft, ChevronRight, Play, Pause, Compass, Maximize2 } from "lucide-react";
 import type { TimelineEntry, StopTimelineEntry } from "../types/itinerary";
+import { useLanguage } from "../context/LanguageContext";
 
 interface LocationCarouselProps {
   entries: TimelineEntry[];
   dayNumber?: number;
   onSelectStop?: (stopId: string) => void;
+  onOpenPhoto?: (stopId: string) => void;
   autoScrollInterval?: number; // default: 2000ms
 }
 
@@ -13,8 +15,10 @@ export const LocationCarousel: React.FC<LocationCarouselProps> = ({
   entries,
   dayNumber,
   onSelectStop,
+  onOpenPhoto,
   autoScrollInterval = 2000,
 }) => {
+  const { t } = useLanguage();
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const [isPaused, setIsPaused] = useState(false);
@@ -171,7 +175,7 @@ export const LocationCarousel: React.FC<LocationCarouselProps> = ({
       <div className="carousel-header-row">
         <div className="carousel-title-group">
           <Compass size={14} className="carousel-icon" />
-          <span className="carousel-title">DAY {dayNumber || 1} CHECKPOINTS · {stops.length} LOCATIONS</span>
+          <span className="carousel-title">{t.carouselDayHeader(dayNumber || 1, stops.length)}</span>
           <span className="carousel-counter-badge">
             {String(currentIndex + 1).padStart(2, "0")} / {String(stops.length).padStart(2, "0")}
           </span>
@@ -182,8 +186,8 @@ export const LocationCarousel: React.FC<LocationCarouselProps> = ({
             type="button"
             className="carousel-control-btn play-pause-btn"
             onClick={togglePause}
-            title={isPaused ? "Resume auto-scroll" : "Pause auto-scroll"}
-            aria-label={isPaused ? "Play auto-scroll" : "Pause auto-scroll"}
+            title={isPaused ? t.carouselPlay : t.carouselPause}
+            aria-label={isPaused ? t.carouselPlay : t.carouselPause}
           >
             {isPaused ? <Play size={12} /> : <Pause size={12} />}
           </button>
@@ -192,8 +196,8 @@ export const LocationCarousel: React.FC<LocationCarouselProps> = ({
             type="button"
             className="carousel-control-btn"
             onClick={handlePrev}
-            title="Previous location"
-            aria-label="Previous location"
+            title={t.carouselPrev}
+            aria-label={t.carouselPrev}
           >
             <ChevronLeft size={14} />
           </button>
@@ -202,8 +206,8 @@ export const LocationCarousel: React.FC<LocationCarouselProps> = ({
             type="button"
             className="carousel-control-btn"
             onClick={handleNext}
-            title="Next location"
-            aria-label="Next location"
+            title={t.carouselNext}
+            aria-label={t.carouselNext}
           >
             <ChevronRight size={14} />
           </button>
@@ -233,7 +237,16 @@ export const LocationCarousel: React.FC<LocationCarouselProps> = ({
                 aria-label={`Jump to stop #${stop.checkpointNumber}: ${stop.title}`}
               >
                 {/* Background Destination Photo */}
-                <div className="carousel-card-img-wrapper">
+                <div
+                  className="carousel-card-img-wrapper"
+                  onClick={(e) => {
+                    if (onOpenPhoto && stop.imageUrl) {
+                      e.stopPropagation();
+                      onOpenPhoto(stop.id);
+                    }
+                  }}
+                  title={onOpenPhoto ? "Tap photo to view full image" : undefined}
+                >
                   <img
                     src={stop.imageUrl || "/images/shanghai/jingan-temple.jpg"}
                     alt={stop.imageAlt || stop.title}
@@ -252,6 +265,20 @@ export const LocationCarousel: React.FC<LocationCarouselProps> = ({
                 <div className="carousel-card-top-badges">
                   <span className="carousel-stop-badge">#{paddedCheckpoint}</span>
                   <span className="carousel-time-badge">{stop.time}</span>
+                  {onOpenPhoto && stop.imageUrl && (
+                    <button
+                      type="button"
+                      className="carousel-zoom-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onOpenPhoto(stop.id);
+                      }}
+                      title={t.carouselZoom}
+                      aria-label={`View full resolution image of ${stop.title}`}
+                    >
+                      <Maximize2 size={11} />
+                    </button>
+                  )}
                 </div>
 
                 {/* Bottom Place Name & Details Overlay */}

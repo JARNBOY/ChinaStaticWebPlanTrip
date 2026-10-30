@@ -10,6 +10,9 @@ import { Timeline } from "./components/Timeline";
 import { NextStopBar } from "./components/NextStopBar";
 import { PlanEditorModal } from "./components/PlanEditorModal";
 import { NeedToKnowPage } from "./components/NeedToKnowPage";
+import { RouteMapVisualizer } from "./components/RouteMapVisualizer";
+import { ViewSwitcher, type ViewMode } from "./components/ViewSwitcher";
+import { ImageViewerModal } from "./components/ImageViewerModal";
 import { Toast } from "./components/Toast";
 import { DAYS_CATALOG } from "./data/daysCatalog";
 import { SHANGHAI_DAY_01 } from "./data/shanghai/day01";
@@ -21,11 +24,12 @@ import { BEIJING_DAY_06 } from "./data/beijing/day06";
 import { BEIJING_DAY_07 } from "./data/beijing/day07";
 import { BEIJING_DAY_08 } from "./data/beijing/day08";
 import { BEIJING_DAY_09 } from "./data/beijing/day09";
-import type { DayPlan } from "./types/itinerary";
+import type { DayPlan, StopTimelineEntry } from "./types/itinerary";
 import { useItineraryStorage } from "./hooks/useItineraryStorage";
 import { useDayProgress } from "./hooks/useDayProgress";
 import { getActiveDay, setActiveDay, checkAndMigratePlanVersion } from "./utils/storage";
 import { copyDayForGoogleSheets } from "./utils/sheetExport";
+import { useLanguage } from "./context/LanguageContext";
 
 // Ensure visitors get the latest updated Day 1–5 Master Plan
 checkAndMigratePlanVersion();
@@ -43,8 +47,10 @@ const DAY_PLANS: Record<number, DayPlan> = {
 };
 
 export function App() {
+  const { t } = useLanguage();
   const [activeDayNumber, setActiveDayNumber] = useState<number>(() => getActiveDay());
-  const [isNeedToKnowActive, setIsNeedToKnowActive] = useState<boolean>(false);
+  const [viewMode, setViewMode] = useState<ViewMode>("timeline");
+  const [selectedPhotoStopId, setSelectedPhotoStopId] = useState<string | null>(null);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -81,7 +87,9 @@ export function App() {
   }, [toastMessage]);
 
   const handleSelectDay = (dayNum: number) => {
-    setIsNeedToKnowActive(false);
+    if (viewMode === "need-to-know") {
+      setViewMode("timeline");
+    }
     setActiveDayNumber(dayNum);
     setActiveDay(dayNum);
   };
@@ -110,6 +118,8 @@ export function App() {
     }
   };
 
+  const allStops = entries.filter((e): e is StopTimelineEntry => e.kind === "stop");
+
   return (
     <div className="travel-app-root">
       <div className="journal-page-container">
@@ -118,7 +128,7 @@ export function App() {
           date={activeDayPlan.date}
           dayNumber={activeDayPlan.dayNumber}
           totalDays={DAYS_CATALOG.length}
-          isNeedToKnow={isNeedToKnowActive}
+          isNeedToKnow={viewMode === "need-to-know"}
           onPrint={handlePrint}
           onCopySheet={handleCopySheet}
           onOpenEditor={() => setIsEditorOpen(true)}
@@ -130,14 +140,53 @@ export function App() {
           days={DAYS_CATALOG}
           activeDay={activeDayNumber}
           onSelectDay={handleSelectDay}
-          isNeedToKnowActive={isNeedToKnowActive}
-          onSelectNeedToKnow={() => setIsNeedToKnowActive(true)}
+          isNeedToKnowActive={viewMode === "need-to-know"}
+          onSelectNeedToKnow={() => setViewMode("need-to-know")}
         />
 
         {/* Main Editorial Card */}
         <main className="journal-editorial-card">
-          {isNeedToKnowActive ? (
-            <NeedToKnowPage onBackToItinerary={() => setIsNeedToKnowActive(false)} />
+          {viewMode === "need-to-know" ? (
+            <NeedToKnowPage onBackToItinerary={() => setViewMode("timeline")} />
+          ) : viewMode === "route-map" ? (
+            <>
+              {/* Day Title & Route */}
+              <DayHeader
+                dayNumber={activeDayPlan.dayNumber}
+                city={activeDayPlan.city}
+                routeTitle={activeDayPlan.routeTitle}
+                routeSubtitle={activeDayPlan.routeSubtitle}
+              />
+
+              {/* Top Compact Route Summary */}
+              <RouteSummary summary={activeDayPlan.summary} />
+
+              {/* Visual Location Preview Reel with Click-to-Zoom */}
+              <LocationCarousel
+                entries={entries}
+                dayNumber={activeDayPlan.dayNumber}
+                onSelectStop={handleSelectStop}
+                onOpenPhoto={(id) => setSelectedPhotoStopId(id)}
+              />
+
+              {/* Interactive Route Map Visualizer */}
+              <RouteMapVisualizer
+                entries={entries}
+                completedIds={completedIds}
+                onToggleComplete={toggleComplete}
+                onOpenPhoto={(id) => setSelectedPhotoStopId(id)}
+                onShowToast={showToast}
+                nextStopId={nextUncompletedStop?.id}
+              />
+
+              {/* Hotel Information & Amap Route */}
+              {activeDayPlan.hotel && (
+                <HotelCard
+                  hotel={activeDayPlan.hotel}
+                  onShowToast={showToast}
+                />
+              )}
+            </>
           ) : (
             <>
               {/* Day Title & Route */}
@@ -151,11 +200,12 @@ export function App() {
               {/* Top Compact Route Summary */}
               <RouteSummary summary={activeDayPlan.summary} />
 
-              {/* Visual Location Preview Reel with 2s Auto-Scroll & Click-to-Scroll */}
+              {/* Visual Location Preview Reel with 2s Auto-Scroll & Click-to-Zoom */}
               <LocationCarousel
                 entries={entries}
                 dayNumber={activeDayPlan.dayNumber}
                 onSelectStop={handleSelectStop}
+                onOpenPhoto={(id) => setSelectedPhotoStopId(id)}
               />
 
               {/* Hotel Information & Amap Route */}
@@ -179,6 +229,7 @@ export function App() {
                 completedIds={completedIds}
                 nextStopId={nextUncompletedStop?.id}
                 onToggle={toggleComplete}
+                onOpenPhoto={(id) => setSelectedPhotoStopId(id)}
                 onShowToast={showToast}
               />
             </>
@@ -188,15 +239,17 @@ export function App() {
         {/* Journal Footer */}
         <footer className="journal-footer no-print">
           <p className="footer-credits">
-            China Trip Itinerary · Designed for mobile exploration & mindful walking
+            {t.footerCredits}
           </p>
           <div className="footer-actions">
             <button
               type="button"
               className="footer-link-btn"
-              onClick={() => setIsNeedToKnowActive((prev) => !prev)}
+              onClick={() =>
+                setViewMode((prev) => (prev === "need-to-know" ? "timeline" : "need-to-know"))
+              }
             >
-              {isNeedToKnowActive ? "View Day Itineraries" : "View Need to Know"}
+              {viewMode === "need-to-know" ? t.footerViewTimeline : t.footerViewNeedToKnow}
             </button>
             <span className="footer-sep">·</span>
             <button
@@ -204,7 +257,7 @@ export function App() {
               className="footer-link-btn"
               onClick={() => setIsEditorOpen(true)}
             >
-              Customize Itinerary
+              {t.footerCustomize}
             </button>
             <span className="footer-sep">·</span>
             <button
@@ -212,20 +265,38 @@ export function App() {
               className="footer-link-btn"
               onClick={handlePrint}
             >
-              Print / Save PDF
+              {t.footerPrint}
             </button>
           </div>
         </footer>
       </div>
 
-      {/* Sticky Bottom Next Stop Bar for Mobile (Only when on Day itinerary) */}
-      {!isNeedToKnowActive && (
+      {/* Floating Bottom View Switcher (Thumb Navigation for Mobile) */}
+      <ViewSwitcher
+        currentMode={viewMode}
+        onSelectMode={(mode) => setViewMode(mode)}
+        completedStopsCount={completedCount}
+        totalStopsCount={totalStops}
+      />
+
+      {/* Sticky Bottom Next Stop Bar for Mobile (Only when on Timeline) */}
+      {viewMode === "timeline" && (
         <NextStopBar
           nextStop={nextUncompletedStop}
           isAllCompleted={isAllCompleted}
           onShowToast={showToast}
         />
       )}
+
+      {/* Fullscreen Photo Lightbox Modal */}
+      <ImageViewerModal
+        isOpen={selectedPhotoStopId !== null}
+        stops={allStops}
+        currentStopId={selectedPhotoStopId}
+        onClose={() => setSelectedPhotoStopId(null)}
+        onSelectStop={(id) => setSelectedPhotoStopId(id)}
+        onShowToast={showToast}
+      />
 
       {/* Lightweight V1 Editor Modal */}
       <PlanEditorModal

@@ -1,4 +1,5 @@
 import type { DayMeta } from "../types/itinerary";
+import { useLanguage } from "../context/LanguageContext";
 
 interface DayNavigationProps {
   days: DayMeta[];
@@ -15,6 +16,7 @@ export const DayNavigation: React.FC<DayNavigationProps> = ({
   isNeedToKnowActive = false,
   onSelectNeedToKnow,
 }) => {
+  const { t } = useLanguage();
   const shanghaiDays = days.filter((d) => d.city === "Shanghai");
   const beijingDays = days.filter((d) => d.city === "Beijing");
 
@@ -60,9 +62,9 @@ export const DayNavigation: React.FC<DayNavigationProps> = ({
   return (
     <nav className="day-navigation no-print" aria-label="Trip days navigation">
       <div className="day-navigation-inner">
-        {renderGroup("SHANGHAI", shanghaiDays)}
+        {renderGroup(t.navShanghai, shanghaiDays)}
         <div className="nav-divider" />
-        {renderGroup("BEIJING", beijingDays)}
+        {renderGroup(t.navBeijing, beijingDays)}
         {onSelectNeedToKnow && (
           <>
             <div className="nav-divider" />
@@ -73,7 +75,7 @@ export const DayNavigation: React.FC<DayNavigationProps> = ({
               title="Important Pre-Trip Notes, Tickets Checklist & Deadlines"
             >
               <span className="pill-icon">📌</span>
-              <span className="pill-text-strong">Need to Know</span>
+              <span className="pill-text-strong">{t.navNeedToKnow}</span>
               <span className="pill-dot" aria-hidden="true">
                 {isNeedToKnowActive ? "●" : "○"}
               </span>

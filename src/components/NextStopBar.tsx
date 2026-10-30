@@ -3,6 +3,7 @@ import { Navigation, Map, Copy, CheckCircle2, ChevronDown, ChevronUp } from "luc
 import type { StopTimelineEntry } from "../types/itinerary";
 import { openMapLocation } from "../utils/maps";
 import { copyForDriverOrDiDi } from "../utils/didi";
+import { useLanguage } from "../context/LanguageContext";
 
 interface NextStopBarProps {
   nextStop: StopTimelineEntry | null;
@@ -15,6 +16,7 @@ export const NextStopBar: React.FC<NextStopBarProps> = ({
   isAllCompleted,
   onShowToast,
 }) => {
+  const { t } = useLanguage();
   const [collapsed, setCollapsed] = useState(false);
 
   if (isAllCompleted) {
@@ -22,7 +24,7 @@ export const NextStopBar: React.FC<NextStopBarProps> = ({
       <aside className="next-stop-bar completed-bar no-print" aria-label="Day Completion Banner">
         <div className="next-bar-content">
           <CheckCircle2 size={18} color="#85A98F" />
-          <span className="completed-text">All 17 stops completed for Day 1! Enjoy Shanghai evening.</span>
+          <span className="completed-text">{t.nextStopAllDone}</span>
         </div>
       </aside>
     );
@@ -57,7 +59,7 @@ export const NextStopBar: React.FC<NextStopBarProps> = ({
       <div className="next-bar-header" onClick={() => setCollapsed(!collapsed)}>
         <div className="next-tag-group">
           <Navigation size={12} className="next-tag-icon" />
-          <span className="next-tag">NEXT STOP #{nextStop.checkpointNumber}</span>
+          <span className="next-tag">{t.nextStopTitle} #{nextStop.checkpointNumber}</span>
           <span className="next-time">{nextStop.time}</span>
         </div>
 
@@ -89,20 +91,20 @@ export const NextStopBar: React.FC<NextStopBarProps> = ({
               type="button"
               className="next-btn open-map-btn"
               onClick={handleOpenMap}
-              title="Open in Maps"
+              title={t.openMap}
             >
               <Map size={13} />
-              <span>Map</span>
+              <span>{t.openMap}</span>
             </button>
 
             <button
               type="button"
               className="next-btn copy-cn-btn"
               onClick={handleCopyChinese}
-              title="Copy Chinese name and address"
+              title={t.copyDidi}
             >
               <Copy size={13} />
-              <span>Copy CN</span>
+              <span>{t.copyDidi}</span>
             </button>
           </div>
         </div>

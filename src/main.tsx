@@ -14,12 +14,15 @@ import '@fontsource/newsreader/600.css'
 
 import './index.css'
 import App from './App.tsx'
+import { LanguageProvider } from './context/LanguageContext.tsx'
 
 // Register Service Worker for offline PWA caching
 registerSW({ immediate: true })
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <LanguageProvider>
+      <App />
+    </LanguageProvider>
   </StrictMode>,
 )

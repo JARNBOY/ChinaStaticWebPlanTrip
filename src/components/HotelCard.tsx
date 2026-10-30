@@ -2,6 +2,7 @@ import React from "react";
 import { Building2, Navigation, Copy, ExternalLink, MapPin, Train } from "lucide-react";
 import type { HotelInfo } from "../types/itinerary";
 import { copyForDriverOrDiDi } from "../utils/didi";
+import { useLanguage } from "../context/LanguageContext";
 
 interface HotelCardProps {
   hotel: HotelInfo;
@@ -9,12 +10,14 @@ interface HotelCardProps {
 }
 
 export const HotelCard: React.FC<HotelCardProps> = ({ hotel, onShowToast }) => {
+  const { t } = useLanguage();
+
   const handleCopyHotel = async () => {
     const success = await copyForDriverOrDiDi(
       hotel.chineseName,
       hotel.chineseAddress,
       (text) => {
-        onShowToast(`Copied hotel for driver: "${text}"`);
+        onShowToast(`${t.hotelCopiedToast}: "${text}"`);
       }
     );
     if (!success) {
@@ -27,7 +30,7 @@ export const HotelCard: React.FC<HotelCardProps> = ({ hotel, onShowToast }) => {
       <div className="hotel-card-header">
         <div className="hotel-tag-badge">
           <Building2 size={13} className="hotel-icon" />
-          <span>BASE HOTEL · SHANGHAI</span>
+          <span>{t.hotelBase}</span>
         </div>
         {hotel.tier && <span className="hotel-tier-pill">{hotel.tier}</span>}
       </div>
@@ -51,7 +54,7 @@ export const HotelCard: React.FC<HotelCardProps> = ({ hotel, onShowToast }) => {
             <Train size={13} className="detail-icon" />
             <div className="detail-content">
               <span className="detail-primary">{hotel.subwayAccess}</span>
-              <span className="detail-secondary">Line 10 connects directly to Yuyuan (Yu Garden) & Hongqiao</span>
+              <span className="detail-secondary">Direct connection to Metro line</span>
             </div>
           </div>
         </div>
@@ -65,7 +68,7 @@ export const HotelCard: React.FC<HotelCardProps> = ({ hotel, onShowToast }) => {
             title="Open route in Amap (Gaode)"
           >
             <Navigation size={13} className="nav-arrow" />
-            <span>Amap Route</span>
+            <span>{t.hotelAmapRoute}</span>
             <ExternalLink size={12} className="ext-icon" />
           </a>
 
@@ -76,7 +79,7 @@ export const HotelCard: React.FC<HotelCardProps> = ({ hotel, onShowToast }) => {
             title="Copy Chinese name and address for taxi or DiDi driver"
           >
             <Copy size={13} />
-            <span>Copy for Driver / DiDi</span>
+            <span>{t.hotelCopyAddress} (DiDi)</span>
           </button>
         </div>
       </div>
