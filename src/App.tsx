@@ -129,6 +129,8 @@ export function App() {
           dayNumber={activeDayPlan.dayNumber}
           totalDays={DAYS_CATALOG.length}
           isNeedToKnow={viewMode === "need-to-know"}
+          activeDayPlan={activeDayPlan}
+          onShowToast={showToast}
           onPrint={handlePrint}
           onCopySheet={handleCopySheet}
           onOpenEditor={() => setIsEditorOpen(true)}
@@ -147,7 +149,10 @@ export function App() {
         {/* Main Editorial Card */}
         <main className="journal-editorial-card">
           {viewMode === "need-to-know" ? (
-            <NeedToKnowPage onBackToItinerary={() => setViewMode("timeline")} />
+            <NeedToKnowPage
+              onBackToItinerary={() => setViewMode("timeline")}
+              onShowToast={showToast}
+            />
           ) : viewMode === "route-map" ? (
             <>
               {/* Day Title & Route */}
@@ -159,7 +164,11 @@ export function App() {
               />
 
               {/* Top Compact Route Summary */}
-              <RouteSummary summary={activeDayPlan.summary} />
+              <RouteSummary
+                summary={activeDayPlan.summary}
+                day={activeDayPlan}
+                onShowToast={showToast}
+              />
 
               {/* Visual Location Preview Reel with Click-to-Zoom */}
               <LocationCarousel
@@ -198,7 +207,11 @@ export function App() {
               />
 
               {/* Top Compact Route Summary */}
-              <RouteSummary summary={activeDayPlan.summary} />
+              <RouteSummary
+                summary={activeDayPlan.summary}
+                day={activeDayPlan}
+                onShowToast={showToast}
+              />
 
               {/* Visual Location Preview Reel with 2s Auto-Scroll & Click-to-Zoom */}
               <LocationCarousel

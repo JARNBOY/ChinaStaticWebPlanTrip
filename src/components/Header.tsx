@@ -1,12 +1,16 @@
 import React, { useMemo } from "react";
 import { Printer, Edit3, RotateCcw, FileSpreadsheet } from "lucide-react";
+import type { DayPlan } from "../types/itinerary";
 import { useLanguage } from "../context/LanguageContext";
+import { DayCalendarMenu } from "./DayCalendarMenu";
 
 interface HeaderProps {
   date: string;
   dayNumber: number;
   totalDays: number;
   isNeedToKnow?: boolean;
+  activeDayPlan?: DayPlan;
+  onShowToast?: (msg: string) => void;
   onPrint: () => void;
   onCopySheet?: () => void;
   onOpenEditor: () => void;
@@ -18,6 +22,8 @@ export const Header: React.FC<HeaderProps> = ({
   dayNumber,
   totalDays,
   isNeedToKnow = false,
+  activeDayPlan,
+  onShowToast,
   onPrint,
   onCopySheet,
   onOpenEditor,
@@ -129,6 +135,10 @@ export const Header: React.FC<HeaderProps> = ({
                 <FileSpreadsheet size={16} />
                 <span className="btn-label">{t.btnSheet}</span>
               </button>
+            )}
+
+            {!isNeedToKnow && activeDayPlan && (
+              <DayCalendarMenu day={activeDayPlan} onShowToast={onShowToast} />
             )}
 
             {!isNeedToKnow && (

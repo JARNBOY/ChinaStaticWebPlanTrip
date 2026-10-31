@@ -8,6 +8,7 @@ export interface Translations {
   needToKnowCounter: string;
   btnPdf: string;
   btnSheet: string;
+  btnCalendar: string;
   btnEdit: string;
   btnReset: string;
   resetDayConfirm: string;
@@ -108,6 +109,15 @@ export interface Translations {
   ntkSurvivalTitle: string;
   ntkSurvivalSubtitle: string;
 
+  // Calendar Actions
+  calAddDayGoogle: string;
+  calDownloadDayIcs: string;
+  calTicketReminderMenu: string;
+  calRemindExact: string;
+  calRemindAdvance: string;
+  calDownloadIcs: string;
+  calToastScheduled: string;
+
   // Footer
   footerCredits: string;
   footerViewTimeline: string;
@@ -124,6 +134,7 @@ export const TRANSLATIONS: Record<Language, Translations> = {
     needToKnowCounter: "ข้อมูลจำเป็น",
     btnPdf: "PDF",
     btnSheet: "ชีต",
+    btnCalendar: "ปฏิทิน",
     btnEdit: "แก้ไข",
     btnReset: "รีเซ็ต",
     resetDayConfirm: "ต้องการรีเซ็ตเช็คลิสต์ทั้งหมดของวันนี้หรือไม่?",
@@ -213,6 +224,14 @@ export const TRANSLATIONS: Record<Language, Translations> = {
     ntkSurvivalTitle: "China Travel Survival Kit & Essential Rules",
     ntkSurvivalSubtitle: "ข้อควรรู้และการเตรียมตัวเพื่อการเดินทางที่ราบรื่น ไร้กังวลในเซี่ยงไฮ้และปักกิ่ง",
 
+    calAddDayGoogle: "เพิ่มแผนวันนี้ใน Google Calendar",
+    calDownloadDayIcs: "ดาวน์โหลดกำหนดการวันนี้ (.ics)",
+    calTicketReminderMenu: "ตั้งเตือน Calendar",
+    calRemindExact: "วันเปิดจองจริง",
+    calRemindAdvance: "เตือนล่วงหน้า 1 วัน (07:30 น.)",
+    calDownloadIcs: "ดาวน์โหลดไฟล์ .ics (มีแจ้งเตือน)",
+    calToastScheduled: "เปิดหน้าบันทึกใน Google Calendar เรียบร้อยแล้ว",
+
     footerCredits: "China Trip Itinerary · ออกแบบเพื่อการเดินเที่ยวด้วยตัวเองในเซี่ยงไฮ้และปักกิ่ง",
     footerViewTimeline: "ดูแผนรายวัน (Timeline)",
     footerViewNeedToKnow: "ดูสิ่งที่ต้องรู้ (Need to Know)",
@@ -227,6 +246,7 @@ export const TRANSLATIONS: Record<Language, Translations> = {
     needToKnowCounter: "NEED TO KNOW",
     btnPdf: "PDF",
     btnSheet: "Sheet",
+    btnCalendar: "Calendar",
     btnEdit: "Edit",
     btnReset: "Reset",
     resetDayConfirm: "Reset all checkboxes for this day?",
@@ -315,6 +335,14 @@ export const TRANSLATIONS: Record<Language, Translations> = {
     ntkFoodSubtitle: "Peking duck, lamb skewers buffet, 24-hr dim sum, and cute cafes discussed by Boy & Jik",
     ntkSurvivalTitle: "China Travel Survival Kit & Essential Rules",
     ntkSurvivalSubtitle: "Crucial preparation rules for a seamless winter adventure in Shanghai and Beijing",
+
+    calAddDayGoogle: "Add Day to Google Calendar",
+    calDownloadDayIcs: "Download Day Itinerary (.ics)",
+    calTicketReminderMenu: "Set Calendar Reminder",
+    calRemindExact: "Exact Booking Deadline",
+    calRemindAdvance: "1 Day Before (07:30 AM)",
+    calDownloadIcs: "Download .ics File (with alarms)",
+    calToastScheduled: "Opened Google Calendar scheduling tab",
 
     footerCredits: "China Trip Itinerary · Designed for mobile exploration & mindful walking in Shanghai & Beijing",
     footerViewTimeline: "View Timeline",

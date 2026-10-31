@@ -3325,4 +3325,231 @@ input {
   margin-left: -2px;
 }
 
+/* ==========================================================================
+   Calendar Reminder & Export Menus
+   ========================================================================== */
+.cal-menu-container {
+  position: relative;
+  display: inline-block;
+}
+
+.cal-menu-trigger-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  background: rgba(85, 107, 111, 0.08);
+  border: 1px solid rgba(85, 107, 111, 0.25);
+  color: var(--accent);
+  cursor: pointer;
+  transition: all 160ms cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+.cal-menu-trigger-btn:hover {
+  background: var(--accent);
+  color: #FFF;
+  border-color: var(--accent);
+  box-shadow: 0 2px 8px rgba(85, 107, 111, 0.2);
+}
+
+.cal-menu-trigger-btn.compact {
+  padding: 4px 8px;
+  font-size: 11px;
+  gap: 4px;
+}
+
+.cal-btn-icon {
+  flex-shrink: 0;
+}
+
+.cal-btn-text {
+  line-height: 1;
+}
+
+.cal-chevron {
+  transition: transform 180ms ease;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.cal-chevron.open {
+  transform: rotate(180deg);
+}
+
+/* Day calendar button in header / summary */
+.cal-day-btn {
+  color: var(--accent);
+  border-color: rgba(85, 107, 111, 0.3);
+}
+
+.cal-day-btn:hover {
+  background: rgba(85, 107, 111, 0.08);
+  border-color: var(--accent);
+}
+
+.cal-day-btn.compact {
+  padding: 3px 8px;
+  font-size: 11px;
+}
+
+/* Dropdown Panel */
+.cal-dropdown-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 1050;
+  min-width: 260px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.04);
+  padding: 6px;
+  animation: calDropdownIn 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.cal-dropdown-panel.header-align {
+  left: auto;
+  right: 0;
+  min-width: 270px;
+}
+
+@keyframes calDropdownIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.cal-dropdown-header {
+  padding: 6px 8px 4px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 2px;
+}
+
+.cal-menu-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: all 140ms ease;
+  width: 100%;
+}
+
+.cal-menu-option:hover {
+  background: var(--bg-subtle);
+}
+
+.cal-menu-option.alert-opt:hover {
+  background: rgba(178, 123, 30, 0.08);
+}
+
+.cal-menu-option.advance-opt:hover {
+  background: rgba(85, 107, 111, 0.08);
+}
+
+.cal-menu-option.ics-opt:hover {
+  background: rgba(31, 31, 30, 0.06);
+}
+
+.opt-icon {
+  flex-shrink: 0;
+  color: var(--text-secondary);
+}
+
+.cal-menu-option.alert-opt .opt-icon {
+  color: #B27B1E;
+}
+
+.cal-menu-option.advance-opt .opt-icon {
+  color: var(--accent);
+}
+
+.opt-text-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.opt-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-main);
+  line-height: 1.3;
+}
+
+.opt-sub {
+  font-size: 10.5px;
+  color: var(--text-muted);
+  line-height: 1.25;
+}
+
+.opt-ext-icon {
+  flex-shrink: 0;
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+.cal-menu-divider {
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 3px 0;
+}
+
+.summary-cal-action {
+  margin-left: auto;
+}
+
+.ntk-ticket-cal-wrap {
+  margin-top: 8px;
+  display: inline-block;
+}
+
+.ntk-tl-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+@media (max-width: 600px) {
+  .cal-dropdown-panel {
+    min-width: 230px;
+    left: 0;
+    right: auto;
+  }
+  .cal-dropdown-panel.header-align {
+    left: auto;
+    right: 0;
+  }
+  .ntk-tl-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
 

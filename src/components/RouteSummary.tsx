@@ -1,13 +1,20 @@
 import React from "react";
 import { Clock, MapPin, Car, Footprints, Train } from "lucide-react";
-import type { RouteSummaryInfo } from "../types/itinerary";
+import type { RouteSummaryInfo, DayPlan } from "../types/itinerary";
 import { useLanguage } from "../context/LanguageContext";
+import { DayCalendarMenu } from "./DayCalendarMenu";
 
 interface RouteSummaryProps {
   summary: RouteSummaryInfo;
+  day?: DayPlan;
+  onShowToast?: (msg: string) => void;
 }
 
-export const RouteSummary: React.FC<RouteSummaryProps> = ({ summary }) => {
+export const RouteSummary: React.FC<RouteSummaryProps> = ({
+  summary,
+  day,
+  onShowToast,
+}) => {
   const { t } = useLanguage();
 
   return (
@@ -24,6 +31,11 @@ export const RouteSummary: React.FC<RouteSummaryProps> = ({ summary }) => {
             {summary.stopsCount} {t.summaryStops} ({summary.estimatedDuration})
           </span>
         </div>
+        {day && (
+          <div className="summary-cal-action">
+            <DayCalendarMenu day={day} onShowToast={onShowToast} compact />
+          </div>
+        )}
       </div>
 
       <div className="summary-transport-grid">

@@ -19,14 +19,19 @@ import {
   type TicketItem,
 } from "../data/needToKnowData";
 import { useLanguage } from "../context/LanguageContext";
+import { CalendarReminderMenu } from "./CalendarReminderMenu";
 
 const STORAGE_KEY = "china_trip_need_to_know_checklist_v1";
 
 interface NeedToKnowPageProps {
   onBackToItinerary?: () => void;
+  onShowToast?: (msg: string) => void;
 }
 
-export const NeedToKnowPage: React.FC<NeedToKnowPageProps> = ({ onBackToItinerary }) => {
+export const NeedToKnowPage: React.FC<NeedToKnowPageProps> = ({
+  onBackToItinerary,
+  onShowToast,
+}) => {
   const { t, language } = useLanguage();
   // Checklist state stored in localStorage
   const [checkedIds, setCheckedIds] = useState<Record<string, boolean>>(() => {
@@ -86,6 +91,15 @@ export const NeedToKnowPage: React.FC<NeedToKnowPageProps> = ({ onBackToItinerar
       setCheckedIds(initial);
     }
   };
+
+  // Lookup map for tickets by ID
+  const ticketMap = useMemo(() => {
+    const map: Record<string, TicketItem> = {};
+    TICKET_ITEMS.forEach((item) => {
+      map[item.id] = item;
+    });
+    return map;
+  }, []);
 
   // Filtered tickets
   const filteredTickets = useMemo(() => {
@@ -302,6 +316,16 @@ export const NeedToKnowPage: React.FC<NeedToKnowPageProps> = ({ onBackToItinerar
                       </h4>
                       <p className="ntk-ticket-sub">{language === "th" ? ticket.nameEn : ticket.nameTh}</p>
                       <p className="ntk-ticket-deadline">{ticket.deadlineDescription}</p>
+
+                      {ticket.deadlineDate && (
+                        <div className="ntk-ticket-cal-wrap" onClick={(e) => e.stopPropagation()}>
+                          <CalendarReminderMenu
+                            ticket={ticket}
+                            onShowToast={onShowToast}
+                            compact
+                          />
+                        </div>
+                      )}
                     </div>
 
                     <button
@@ -359,7 +383,16 @@ export const NeedToKnowPage: React.FC<NeedToKnowPageProps> = ({ onBackToItinerar
                   ระบบใหม่เปิดให้ส่งคำขอล่วงหน้าได้ 17–60 วัน โดยระบบจะประมวลผลจับคู่ตั๋วให้ในช่วง 16–20 วันก่อนเดินทาง
                   เมื่อได้ตั๋วจะมีแจ้งเตือนให้เข้ามาชำระเงิน
                 </p>
-                <div className="ntk-tl-tag">แอป China Railway 12306</div>
+                <div className="ntk-tl-footer">
+                  <div className="ntk-tl-tag">แอป China Railway 12306</div>
+                  {ticketMap["train-sh-bj"] && (
+                    <CalendarReminderMenu
+                      ticket={ticketMap["train-sh-bj"]}
+                      onShowToast={onShowToast}
+                      compact
+                    />
+                  )}
+                </div>
               </div>
             </div>
 
@@ -372,7 +405,16 @@ export const NeedToKnowPage: React.FC<NeedToKnowPageProps> = ({ onBackToItinerar
                   เปิดให้ซื้อตั๋วล่วงหน้าสำหรับเข้า Park บ่ายวันแรก 28 ธ.ค. (ตั้งแต่ 15:00 น.) และเต็มวัน 29 ธ.ค.
                   แนะนำซื้อผ่าน Official App หรือ Klook/Trip.com แล้วนำหมายเลขตั๋วมาผูกเข้าแอป Disney
                 </p>
-                <div className="ntk-tl-tag">Shanghai Disney Resort App</div>
+                <div className="ntk-tl-footer">
+                  <div className="ntk-tl-tag">Shanghai Disney Resort App</div>
+                  {ticketMap["shanghai-disney-pass"] && (
+                    <CalendarReminderMenu
+                      ticket={ticketMap["shanghai-disney-pass"]}
+                      onShowToast={onShowToast}
+                      compact
+                    />
+                  )}
+                </div>
               </div>
             </div>
 
@@ -385,7 +427,16 @@ export const NeedToKnowPage: React.FC<NeedToKnowPageProps> = ({ onBackToItinerar
                   ต้องจองรอบเวลาเข้าล่วงหน้าผ่านแอปพลิเคชัน/WeChat เลือกรอบเวลา <strong>16:00–18:00 น.</strong>
                   ของวันอาทิตย์ที่ 27 ธ.ค. เพื่อชมไฟยามค่ำคืนและบรรยากาศริมแม่น้ำ
                 </p>
-                <div className="ntk-tl-tag">WeChat Mini Program</div>
+                <div className="ntk-tl-footer">
+                  <div className="ntk-tl-tag">WeChat Mini Program</div>
+                  {ticketMap["rockbund-christmas-market"] && (
+                    <CalendarReminderMenu
+                      ticket={ticketMap["rockbund-christmas-market"]}
+                      onShowToast={onShowToast}
+                      compact
+                    />
+                  )}
+                </div>
               </div>
             </div>
 
@@ -399,7 +450,16 @@ export const NeedToKnowPage: React.FC<NeedToKnowPageProps> = ({ onBackToItinerar
                   สำหรับเดินทางวันที่ 30 ธ.ค. (ขบวน G28 เวลา 19:00–23:18 น.)
                   ระบบเปิดตอน <strong>12:30 น. เวลาไทย</strong> เป๊ะๆ ต้องล็อกอินรอและรีบกดยืนยันทันที
                 </p>
-                <div className="ntk-tl-tag alert">China Railway 12306 (สำคัญมาก!)</div>
+                <div className="ntk-tl-footer">
+                  <div className="ntk-tl-tag alert">China Railway 12306 (สำคัญมาก!)</div>
+                  {ticketMap["train-sh-bj"] && (
+                    <CalendarReminderMenu
+                      ticket={ticketMap["train-sh-bj"]}
+                      onShowToast={onShowToast}
+                      compact
+                    />
+                  )}
+                </div>
               </div>
             </div>
 
@@ -414,7 +474,16 @@ export const NeedToKnowPage: React.FC<NeedToKnowPageProps> = ({ onBackToItinerar
                   กดผ่าน Official Disney App เท่านั้น เพื่อเข้า Park ก่อนบุคคลทั่วไป 1 ชั่วโมง (เช้าตรู่ 07:15 น.)
                   สำหรับ Rope Drop โซน Zootopia
                 </p>
-                <div className="ntk-tl-tag alert">Shanghai Disney Official App</div>
+                <div className="ntk-tl-footer">
+                  <div className="ntk-tl-tag alert">Shanghai Disney Official App</div>
+                  {ticketMap["shanghai-disney-early-bird"] && (
+                    <CalendarReminderMenu
+                      ticket={ticketMap["shanghai-disney-early-bird"]}
+                      onShowToast={onShowToast}
+                      compact
+                    />
+                  )}
+                </div>
               </div>
             </div>
 
@@ -428,7 +497,16 @@ export const NeedToKnowPage: React.FC<NeedToKnowPageProps> = ({ onBackToItinerar
                   สำหรับรอบเข้าชมวันปีใหม่ 1 ม.ค. 2570 ตั๋วจะเปิดกดในค่ำคืนวันคริสต์มาส 25 ธ.ค.
                   โควตาเต็มเร็วมาก ต้องเตรียมกรอกเลขพาสปอร์ตให้พร้อมก่อนเวลา
                 </p>
-                <div className="ntk-tl-tag alert">WeChat: 故宫博物院观众服务</div>
+                <div className="ntk-tl-footer">
+                  <div className="ntk-tl-tag alert">WeChat: 故宫博物院观众服务</div>
+                  {ticketMap["forbidden-city-ticket"] && (
+                    <CalendarReminderMenu
+                      ticket={ticketMap["forbidden-city-ticket"]}
+                      onShowToast={onShowToast}
+                      compact
+                    />
+                  )}
+                </div>
               </div>
             </div>
           </div>
